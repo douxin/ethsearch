@@ -6,5 +6,5 @@ ethsearch is a cmd tool to search infos on eth network, you can search balance o
 2. then, clone this project source code with `git`
 3. run with cmd
 ```bash
-node ethsearch.js --PARAMS
+node ethsearch.js --help
 ```
