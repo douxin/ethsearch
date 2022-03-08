@@ -8,5 +8,10 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@alch/alchemy-web3": "^1.2.5",
+    "dotenv": "^16.0.0",
+    "yargs": "^17.3.1"
+  }
 }
