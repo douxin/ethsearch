@@ -25,6 +25,13 @@ const args = yargs(hideBin(process.argv))
         return y.option('fromAddr', {describe: "sender address", type: 'string'})
             .demandOption('fromAddr', 'fromAddr must input')
     })
+    .command('getBlockNumber', 'get current block number')
+    .command('getBlockInfo', 'get block info with a given block number', (y) => {
+        return y.option('blockNumber', {describe: 'block number', type: 'number'})
+            .option('withTrx', {describe: 'return transaction or not', type: 'boolean'})
+            .demandOption(['blockNumber'], 'blockNumber must input')
+    })
+    .command('getGasPrice', 'get current gas price')
     .demandCommand(1, 1, 'you should at least one command to run this tool', 'only one command at once time')
     .help()
     .argv;
@@ -64,6 +71,18 @@ async function main() {
         const fromAddr = args.fromAddr;
         const txs = await web3.alchemy.getAssetTransfers({fromAddress: fromAddr});
         console.log(txs);
+    } else if (cmd == 'getBlockNumber') {
+        const number = await web3.eth.getBlockNumber();
+        console.log(number);
+    } else if (cmd == 'getBlockInfo') {
+        const blockNum = args.blockNumber;
+        const withTrx = args.withTrx || false;
+        const info = await web3.eth.getBlock(blockNum, withTrx);
+        console.log(info);
+    } else if (cmd == 'getGasPrice') {
+        const priceInWei = await web3.eth.getGasPrice();
+        const priceInEth = await web3.utils.fromWei(priceInWei, 'ether');
+        console.log(`gas price: ${priceInWei} wei, and ${priceInEth} eth`);
     } else {
         console.error('you should never reach here');
     }
