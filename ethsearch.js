@@ -1,95 +1,25 @@
 /**
  * entry of the tool
  */
-const { createAlchemyWeb3 } = require('@alch/alchemy-web3');
-require('dotenv').config();
-const web3 = createAlchemyWeb3(`https://eth-mainnet.alchemyapi.io/v2/${process.env.API_KEY}`);
-
 const args = require('./args');
-
-const prettyPrintRes = (res) => {
-    console.log(JSON.stringify(res, null, 4));
-};
-
-const getBalance = async () => {
-    const addr = args.address;
-    const balanceInWei = await web3.eth.getBalance(addr);
-    const balanceInEth = web3.utils.fromWei(balanceInWei);
-    console.log(`balance of ${addr}: ${balanceInEth} eth`);
-}
-
-const getNFTs = async () => {
-    const owner = args.owner;
-    const nfts = await web3.alchemy.getNfts({ owner });
-    console.log(`total nfts count of ${owner}: ${nfts.totalCount}`);
-    console.log(`\nnfts list:\n----------------------`);
-    for (const nft of nfts.ownedNfts) {
-        console.log(`nft title: ${nft.title}`);
-        console.log(`contract address: ${nft.contract.address}`);
-        console.log(`token id: ${nft.id.tokenId}`);
-        console.log(`token type: ${nft.id.tokenMetadata.tokenType}`);
-        console.log(`nft desc: ${nft.description}`);
-        console.log(`last updated at: ${nft.timeLastUpdated}`);
-        console.log(`----------------------`);
-    }
-}
-
-const getNFTDetail = async () => {
-    const contractAddr = args.contractAddr;
-    const tokenId = args.tokenId;
-    const nft = await web3.alchemy.getNftMetadata({ contractAddress: contractAddr, tokenId });
-    console.log(`metadata for nft ${contractAddr} with tokenId ${tokenId}`);
-    prettyPrintRes(nft);
-}
-
-const getTransfers = async () => {
-    const fromAddr = args.fromAddr || null;
-    const toAddr = args.toAddr || null;
-    if (!fromAddr && !toAddr) {
-        console.error(`fromAddr and toAddr cannot both empty`)
-    } else {
-        let option = {};
-        if (fromAddr) option.fromAddr = fromAddr;
-        if (toAddr) option.toAddr = toAddr;
-        const txs = await web3.alchemy.getAssetTransfers(option);
-        console.log(txs);
-    }
-}
-
-const getBlockNumber = async () => {
-    const number = await web3.eth.getBlockNumber();
-    console.log(number);
-}
-
-const getBlockInfo = async () => {
-    const blockNum = args.blockNumber;
-    const withTrx = args.withTrx || false;
-    const info = await web3.eth.getBlock(blockNum, withTrx);
-    console.log(info);
-}
-
-const getGasPrice = async () => {
-    const priceInWei = await web3.eth.getGasPrice();
-    const priceInEth = await web3.utils.fromWei(priceInWei, 'ether');
-    console.log(`gas price: ${priceInWei} wei, and ${priceInEth} eth`);
-}
+const apis = require('./apis');
 
 const cmd = args._;
 async function main() {
     if (cmd == 'getBalance') {
-        await getBalance();
+        await apis.getBalance(args);
     } else if (cmd == 'getNFTs') {
-        await getNFTs();
+        await apis.getNFTs(args);
     } else if (cmd == 'getNFTDetail') {
-        await getNFTDetail();
+        await apis.getNFTDetail(args);
     } else if (cmd == 'getTransfers') {
-        await getTransfers();
+        await apis.getTransfers(args);
     } else if (cmd == 'getBlockNumber') {
-        await getBlockNumber();
+        await apis.getBlockNumber(args);
     } else if (cmd == 'getBlockInfo') {
-        await getBlockInfo();
+        await apis.getBlockInfo(args);
     } else if (cmd == 'getGasPrice') {
-        await getGasPrice();
+        await apis.getGasPrice(args);
     } else {
         console.error('you should never reach here');
     }
