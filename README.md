@@ -1,4 +1,4 @@
-# ethsearch cli
+# ethsearch
 ethsearch is a cmd tool to search infos on eth network, you can search balance of the given address, or transactions, nfts.
 
 ## how to use
