@@ -22,8 +22,8 @@ const args = yargs(hideBin(process.argv))
             .demandOption(['contractAddr', 'tokenId'], 'contractAddr and tokenId all required')
     })
     .command('getTransfers', 'get transfers of the given address', (y) => {
-        return y.option('fromAddr', {describe: "sender address", type: 'string'})
-            .demandOption('fromAddr', 'fromAddr must input')
+        return y.option('fromAddr', {describe: 'sender address', type: 'string'})
+            .option('toAddr', {describe: 'receiver address', type: 'string'})
     })
     .command('getBlockNumber', 'get current block number')
     .command('getBlockInfo', 'get block info with a given block number', (y) => {
@@ -68,9 +68,17 @@ async function main() {
         console.log(`metadata for nft ${contractAddr} with tokenId ${tokenId}`);
         prettyPrintRes(nft);
     } else if (cmd == 'getTransfers') {
-        const fromAddr = args.fromAddr;
-        const txs = await web3.alchemy.getAssetTransfers({fromAddress: fromAddr});
-        console.log(txs);
+        const fromAddr = args.fromAddr || null;
+        const toAddr = args.toAddr || null;
+        if (!fromAddr && !toAddr) {
+            console.error(`fromAddr and toAddr cannot both empty`)
+        } else {
+            let option = {};
+            if (fromAddr) option.fromAddr = fromAddr;
+            if (toAddr) option.toAddr = toAddr;
+            const txs = await web3.alchemy.getAssetTransfers(option);
+            console.log(txs);
+        }
     } else if (cmd == 'getBlockNumber') {
         const number = await web3.eth.getBlockNumber();
         console.log(number);
