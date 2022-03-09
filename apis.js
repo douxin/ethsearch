@@ -2,11 +2,24 @@ const { createAlchemyWeb3 } = require('@alch/alchemy-web3');
 require('dotenv').config();
 const web3 = createAlchemyWeb3(`https://eth-mainnet.alchemyapi.io/v2/${process.env.API_KEY}`);
 
+const getAccountType = async (addr) => {
+    const code = await web3.eth.getCode(addr);
+    if (code) {
+        return 'contract';
+    }
+
+    return 'wallet';
+}
+
 const getBalance = async (args) => {
     const addr = args.address;
     const balanceInWei = await web3.eth.getBalance(addr);
-    const balanceInEth = web3.utils.fromWei(balanceInWei);
-    console.log(`balance of ${addr}: ${balanceInEth} eth`);
+    const balanceInGWei = web3.utils.fromWei(balanceInWei, 'gwei');
+    const balanceInEth = web3.utils.fromWei(balanceInWei, 'ether');
+    const accountType = await getAccountType(addr);
+    console.log(`address: ${addr}`);
+    console.log(`type: ${accountType}`);
+    console.log(`balance: ${balanceInWei} wei, \n\t${balanceInGWei} gwei, \n\t${balanceInEth} eth`);
 }
 
 const getNFTs = async (args) => {
