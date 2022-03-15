@@ -20,6 +20,8 @@ async function main() {
         await apis.getBlockInfo(args);
     } else if (cmd == 'getGasPrice') {
         await apis.getGasPrice(args);
+    } else if (cmd == 'getTransaction') {
+        await apis.getTransaction(args);
     } else {
         console.error('you should never reach here');
     }

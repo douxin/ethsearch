@@ -22,6 +22,9 @@ const args = yargs(hideBin(process.argv))
         return y.option('fromAddr', { describe: 'sender address', type: 'string' })
             .option('toAddr', { describe: 'receiver address', type: 'string' })
     })
+    .command('getTransaction', 'get transaction info', (y) => {
+        return y.option('trxHash', { describe: 'transaction hash', type: 'string' })
+    })
     .command('getBlockNumber', 'get current block number')
     .command('getBlockInfo', 'get block info with a given block number', (y) => {
         return y.option('blockNumber', { describe: 'block number', type: 'number' })

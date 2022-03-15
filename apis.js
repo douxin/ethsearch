@@ -4,11 +4,11 @@ const web3 = createAlchemyWeb3(`https://eth-mainnet.alchemyapi.io/v2/${process.e
 
 const getAccountType = async (addr) => {
     const code = await web3.eth.getCode(addr);
-    if (code) {
-        return 'contract';
+    if (code == '0x') {
+        return 'wallet';
     }
 
-    return 'wallet';
+    return 'contract';
 }
 
 const getBalance = async (args) => {
@@ -78,6 +78,11 @@ const getGasPrice = async (args) => {
     console.log(`gas price: ${priceInWei} wei, and ${priceInEth} eth`);
 }
 
+const getTransaction = async (args) => {
+    const trx = await web3.eth.getTransaction(args.trxHash);
+    console.log(`transaction: ${JSON.stringify(trx, null, 4)}`);
+}
+
 module.exports = {
     getBalance,
     getNFTs,
@@ -86,4 +91,5 @@ module.exports = {
     getBlockNumber,
     getBlockInfo,
     getGasPrice,
+    getTransaction,
 }
